@@ -80,9 +80,8 @@ async function sendExcelEmail() {
   }
 }
 
-// Schedule the cron job to run every Sunday at 8 AM
-// cron.schedule('0 8 * * 0', () => {
-cron.schedule('* * * * *', () => {
+// Schedule the cron job to run every Friday at 7:30 PM
+cron.schedule('30 19 * * 5', () => {
   console.log('Running sendExcelEmail cron job');
   sendExcelEmail()
     .then(() => console.log('Excel email sent successfully.'))
