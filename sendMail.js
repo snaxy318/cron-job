@@ -1,28 +1,68 @@
-// sendMail.js
-const cron = require('node-cron');
-const excelService = require('./services/excelService');
-const emailUtils = require('./utils/emailUtils');
+//sendMail.js
+const express = require('express');
+const router = express.Router();
+const cron = require('node-cron'); 
+const excelService = require('./services/excelCompleteService');
+const nodemailer = require('nodemailer');
 const path = require('path');
+const env = require('dotenv');
+const fs = require('fs');
 
-// Function to send emails
-async function sendMail() {
+env.config();
+
+// Function to generate Excel and send email
+async function sendExcelEmail() {
   try {
-    // Generate Excel files for all users
-    console.log("In here");
-    await excelService.generateTasksExcel();
+    // Generate Excel file for all users
+   await excelService.generateTasksExcel();
+    console.log('Running sendExcelEmail cron job');
 
-    // Send emails with Excel files to users
-    await emailUtils.sendEmails();
+    // Define email options
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+
+    const filePath = path.join(__dirname, 'UserTasks.xlsx');
+    const fileContent = fs.readFileSync(filePath);
+
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: 'suryanshtejas.singh2022@vitstudent.ac.in',  // Replace with the recipient email
+      subject: 'Weekly Task Report',
+      text: 'Please find attached the weekly task report.',
+      attachments: [
+        {
+          filename: 'UserTasks.xlsx',
+          content: fileContent,
+        },
+      ],
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
   } catch (error) {
-    console.log('Failed to send emails:', error.message);
-    throw new Error('Failed to send emails');
+    console.error('Failed to send email:', error.message);
   }
 }
 
-// Schedule the cron job to run every 7 days (every week)
-cron.schedule('0 0 * * 0', () => {
-  console.log('Running sendMail cron job');
-  sendMail()
-    .then(() => console.log('Emails sent successfully.'))
-    .catch((err) => console.log('Error sending emails:', err));
+// Schedule the cron job to run every Friday at 7:30 PM
+cron.schedule('30 19 * * 5', () => {
+  console.log('Running sendExcelEmail cron job');
+  sendExcelEmail()
+    .then(() => console.log('Excel email sent successfully.'))
+    .catch((err) => console.error('Error sending Excel email:', err));
 });
+
+// Schedule the cron job to run every Friday at 7:30 PM
+cron.schedule('30 19 * * 5', () => {
+  sendExcelEmail()
+    .then(() => console.log('Excel email sent successfully.'))
+    .catch((err) => console.error('Error sending Excel email:', err));
+});
+
+module.exports = router;

@@ -34,6 +34,15 @@ const User = sequelize.define('user', {
     type: DataTypes.INTEGER, // Assuming DesignationId is of type INTEGER
     allowNull: false,
     field: 'designationid' // Specify the correct column name in the database
+  },
+  username: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    unique: true
+  },
+  password: {
+    type: DataTypes.TEXT,
+    allowNull: false
   }
 },{
   tableName: 'user',

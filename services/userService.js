@@ -1,17 +1,26 @@
 const User = require('../models/user');
 const Department = require('../models/department');
 const Designation = require('../models/designation');
+const bcrypt = require('bcrypt');
 
 class UserService {
   async createUser(userData) {
     try {
-      const user = await User.create(userData);
-      console.log("In here");
-      return user;
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+      return User.create({
+        ...userData,
+        password: hashedPassword
+      });
     } catch (error) {
+      console.log(error);
       throw new Error('Failed to create user');
     }
   }
+
+  async getUserByUsername (username) {
+    return User.findOne({ where: { username } });
+  };
 
   async getUserById(userId) {
     try {
