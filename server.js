@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors'); // Import the cors package
 const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,6 +9,7 @@ env.config();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cors());
 
 // Routes
 const taskRoutes = require('./routes/taskRoutes');
@@ -21,7 +23,7 @@ const authMiddleware = require('./middleware/authMiddleware');   // Use auth mid
 
 app.use('/auth', authRoutes);
 app.use('/tasks', taskRoutes);
-app.use('/users',authMiddleware, userRoutes);
+app.use('/users', userRoutes);
 app.use('/departments', departmentRoutes);
 app.use('/designations', designationRoutes);
 app.use('/excel', excelRoutes);
