@@ -29,6 +29,7 @@ const createUser = async (req, res) => {
     const newUser = await userService.createUser(userData);
     res.status(201).json(newUser);
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({ error: error.message });
   }
 };

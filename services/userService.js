@@ -13,7 +13,7 @@ class UserService {
         password: hashedPassword
       });
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       throw new Error('Failed to create user');
     }
   }

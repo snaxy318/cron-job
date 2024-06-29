@@ -8,12 +8,14 @@ const login = async (req, res) => {
   try {
     const user = await userService.getUserByUsername(username);
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log(isMatch);
+
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Incorrect password' });
     }
 
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
