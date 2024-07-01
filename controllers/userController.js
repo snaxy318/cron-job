@@ -12,7 +12,8 @@ const getAllUsers = async (req, res) => {
 
 // Controller function to get a user by ID
 const getUserById = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.user.id;
+  console.log(req.user);
   try {
     const user = await userService.getUserById(userId);
     res.json(user);

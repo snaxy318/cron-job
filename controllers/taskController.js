@@ -13,7 +13,8 @@ const getAllTasks = async (req, res) => {
 
 //Contoller fucntion to get all the user task
 async function getTasksByUserId(req, res) {
-  const userId = parseInt(req.params.userId);
+  const userId = parseInt(req.user.id);
+  console.log(req.user.id);
   try {
     const tasks = await taskService.getTasksByUserId(userId);
     res.status(200).json(tasks);
@@ -25,8 +26,9 @@ async function getTasksByUserId(req, res) {
 // Controller function to create a new task
 const createTask = async (req, res) => {
   const taskData = req.body;
+  const userid = req.user.id;
   try {
-    const newTask = await taskService.createTask(taskData);
+    const newTask = await taskService.createTask(taskData,userid);
     res.status(201).json(newTask);
   } catch (error) {
     console.log(error);

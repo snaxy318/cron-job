@@ -3,9 +3,9 @@ const User = require('../models/user');
 
 class TaskService {
   
-  async createTask(taskData) {
+  async createTask(taskData,userid) {
     try {
-      const task = await Task.create(taskData);
+      const task = await Task.create({...taskData,userid});
       return task;
     } catch (error) {
       console.log(error);
@@ -30,7 +30,7 @@ class TaskService {
       });
       return tasks;
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       throw new Error(`Failed to retrieve tasks: ${error.message}`);
     }
   }
